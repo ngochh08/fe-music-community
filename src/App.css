@@ -1,42 +1,138 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Nền toàn trang */
+.app-wrapper {
+  background-color: #e8e4d9;
+  min-height: 100vh;
+  width: 100vw; /* Ép rộng hết chiều ngang màn hình */
+  margin: 40;
+  padding: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Header */
+.custom-navbar {
+  background-color: #5c4023;
+  width: 100%;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Ô tìm kiếm  */
+.search-container {
+  border: 1.5px solid #8d7b68; /* Viền nâu rõ ràng, không mờ */
+  border-radius: 50px; /* Bo tròn tối đa */
+  background-color: #ded9c8;
+  overflow: hidden; /* Cắt góc các phần tử con */
+  display: flex;
+  align-items: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Ô input bên trong */
+.search-input {
+  border: none; /* Xóa viền mặc định của input */
+  box-shadow: none; /* Xóa bóng mờ khi click vào */
+  background: transparent;
+  padding: 10px 20px;
 }
 
-.card {
-  padding: 2em;
+/* Phần chứa icon kính lúp */
+.search-icon-box {
+  background: transparent;
+  border: none;
+  padding-right: 15px;
+  color: #8d7b68;
 }
 
-.read-the-docs {
-  color: #888;
+/* Ô viết bài  */
+.create-post-box {
+  background-color: #ded9c8;
+  border: 1px solid #8d7b68;
+  border-radius: 12px;
+}
+
+/* Thẻ bài viết - bo góc và đổ bóng nhẹ */
+.post-card {
+  background-color: #f2f0e6;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Lớp nền Footer */
+.footer-section {
+  background-color: #e8e4d9; /* Màu kem đồng bộ với body */
+  border-top: 1px solid #d6d1c2; /* Đường kẻ mờ ngăn cách */
+}
+
+/* Font chữ Logo Footer */
+.footer-logo {
+  font-family: "serif";
+  color: #5c4023; /* Màu nâu đặc trưng */
+  font-weight: normal;
+}
+
+.footer-section p {
+  color: #666; /* Màu xám nhẹ cho chữ */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.footer-heading {
+  font-family: "serif";
+  font-weight: 500;
+  color: #444;
+}
+
+/* Thiết lập chiều cao tối thiểu cho toàn bộ app */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 100% chiều cao màn hình */
+  background-color: #e8e4d9;
+}
+
+/* Ép phần nội dung chính giãn ra để đẩy Footer xuống */
+.main-content {
+  flex: 1; /* Tự động lấy hết phần không gian trống còn lại */
+}
+
+/* Footer sát lề dưới */
+.footer-section {
+  background-color: #e8e4d9;
+  border-top: 1px solid #d6d1c2;
+  width: 100%;
+}
+
+/* Làm mượt ô soạn thảo */
+.post-input-area {
+  border: none;
+  font-size: 1.2rem;
+  resize: none;
+  padding: 0;
+}
+
+.post-input-area:focus {
+  box-shadow: none;
+}
+
+/* Nút icon chức năng */
+.action-icon-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.action-icon-btn:hover {
+  background-color: #f0f2f5;
+}
+
+/* Khung xem trước media */
+.media-preview-container {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  position: relative;
+  background: #f8f9fa;
 }
