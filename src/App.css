@@ -136,3 +136,15 @@
   position: relative;
   background: #f8f9fa;
 }
+
+/* Ẩn dấu mũi tên (caret) của Dropdown */
+.custom-dropdown-toggle .dropdown-toggle::after {
+  display: none;
+}
+
+/* Tùy chỉnh để khi hover vào phần user nhìn mượt hơn */
+.custom-dropdown-toggle .nav-link {
+  padding: 0;
+  display: flex;
+  align-items: center;
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import Header from "./components/Header";
@@ -9,9 +9,45 @@ import CreatePostModal from "./components/CreatePostModal";
 import "./App.css";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Trạng thái đăng nhập
-  const [showAuth, setShowAuth] = useState(false); // Ẩn/hiện Modal
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Tự động kiểm tra đăng nhập khi vừa load trang
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
+    if (savedUser && savedUser !== "undefined" && savedToken) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        if (parsedUser) {
+          setIsLoggedIn(true);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error("Lỗi dữ liệu JSON, đang xóa bộ nhớ tạm...");
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
+
+  // Xử lý khi đăng nhập thành công từ AuthModal
+  const handleLoginSuccess = (userData) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+    setShowAuth(false);
+  };
+
+  // Xử lý đăng xuất xóa token
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -22,29 +58,27 @@ function App() {
       comments: 5,
     },
   ]);
-  // Hàm xử lý khi nhấn nút "Đăng bài"
+
   const handleAddPost = (newPost) => {
-    // Thêm bài mới lên đầu danh sách (dùng kỹ thuật Spread Operator [...])
     setPosts([newPost, ...posts]);
   };
+
   return (
     <div className="app-wrapper">
       <Header
         isLoggedIn={isLoggedIn}
-        onLoginClick={() => setShowAuth(true)} // Dòng này truyền "lệnh" mở modal vào Header
-        onLogout={() => setIsLoggedIn(false)}
+        user={user} // Truyền user để Header hiển thị tên
+        onLoginClick={() => setShowAuth(true)}
+        onLogout={handleLogout} // Sử dụng hàm logout đã xử lý localStorage
       />
 
       <div className="main-content">
         <Container className="py-5">
-          {/* justify-content-center để đẩy cột vào giữa */}
           <Row className="justify-content-center">
-            {/* md={8} hoặc md={7} sẽ giúp nội dung gọn lại ở giữa màn hình máy tính */}
             <Col xs={12} md={8} lg={8}>
-              {/* Lớp: Thanh tìm kiếm */}
               <InputGroup className="mb-4 search-container">
                 <Form.Control
-                  placeholder="Hinted search text"
+                  placeholder="Tìm kiếm bài viết..."
                   className="search-input"
                 />
                 <InputGroup.Text className="search-icon-box">
@@ -52,21 +86,18 @@ function App() {
                 </InputGroup.Text>
               </InputGroup>
 
-              {/* Ô Đăng Bài hoặc Thông báo mời đăng nhập */}
               <div
                 className="create-post-box mb-4 p-3 d-flex justify-content-between align-items-center"
                 style={{ cursor: "pointer" }}
-                onClick={() => {
-                  if (isLoggedIn) {
-                    setShowCreateModal(true); // Đã đăng nhập -> Mở modal đăng bài
-                  } else {
-                    setShowAuth(true); // Chưa đăng nhập -> Hiện bảng đăng nhập ngay
-                  }
-                }}
+                onClick={() =>
+                  isLoggedIn ? setShowCreateModal(true) : setShowAuth(true)
+                }
               >
                 {isLoggedIn ? (
                   <>
-                    <p className="text-muted m-0">Bạn đang nghĩ gì?</p>
+                    <p className="text-muted m-0">
+                      Chào {user?.displayName || "bạn"}, bạn đang nghĩ gì?
+                    </p>
                     <div className="plus-icon-circle">+</div>
                   </>
                 ) : (
@@ -81,7 +112,6 @@ function App() {
                 )}
               </div>
 
-              {/* Lớp: Danh sách bài đăng */}
               {posts.map((post) => (
                 <PostCard
                   key={post.id}
@@ -94,7 +124,7 @@ function App() {
             </Col>
           </Row>
         </Container>
-        {/* Modal tạo bài viết */}
+
         <CreatePostModal
           show={showCreateModal}
           handleClose={() => setShowCreateModal(false)}
@@ -105,9 +135,10 @@ function App() {
       <AuthModal
         show={showAuth}
         handleClose={() => setShowAuth(false)}
-        onLoginSuccess={() => setIsLoggedIn(true)}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );
 }
+
 export default App;

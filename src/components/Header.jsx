@@ -1,12 +1,19 @@
-import { Navbar, Nav, Container, Button, Image } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  NavDropdown,
+  Image,
+  Button,
+} from "react-bootstrap";
 
-const Header = ({ isLoggedIn, onLoginClick, onLogout }) => {
+const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
   return (
     <Navbar
       style={{ backgroundColor: "#5c4023" }}
       variant="dark"
       expand="lg"
-      className="py-3"
+      className="py-2"
     >
       <Container>
         <Navbar.Brand
@@ -17,28 +24,48 @@ const Header = ({ isLoggedIn, onLoginClick, onLogout }) => {
           hocdanguitar
         </Navbar.Brand>
 
-        <Navbar.Collapse className="justify-content-end">
-          <Nav className="gap-3 align-items-center">
-            <Nav.Link href="#community" className="text-white">
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+          <Nav className="align-items-center">
+            <Nav.Link href="#community" className="text-white me-3">
               Community
             </Nav.Link>
 
             {isLoggedIn ? (
-              <div className="d-flex align-items-center gap-3">
-                <Image
-                  src="https://i.pravatar.cc/150?u=a"
-                  roundedCircle
-                  width={35}
-                />
-                <Button variant="outline-light" size="sm" onClick={onLogout}>
-                  Thoát
-                </Button>
-              </div>
+              // Sử dụng NavDropdown để gom tên, ảnh và nút thoát vào một chỗ
+              <NavDropdown
+                title={
+                  <div className="d-inline-flex align-items-center gap-2">
+                    <Image
+                      src={user?.avatar}
+                      roundedCircle
+                      width={35}
+                      height={35}
+                      style={{ objectFit: "cover", border: "1px solid #fff" }}
+                    />
+                    <span className="text-white fw-bold">
+                      {user?.displayName}
+                    </span>
+                  </div>
+                }
+                id="user-dropdown"
+                align="end"
+                className="custom-dropdown-toggle"
+              >
+                <NavDropdown.Item href="#profile">
+                  Trang cá nhân
+                </NavDropdown.Item>
+                <NavDropdown.Item href="#settings">Cài đặt</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={onLogout} className="text-danger">
+                  Thoát tài khoản
+                </NavDropdown.Item>
+              </NavDropdown>
             ) : (
               <Button
                 variant="light"
                 size="sm"
-                className="px-3"
+                className="px-4 rounded-pill"
                 onClick={onLoginClick}
               >
                 Đăng nhập
@@ -50,5 +77,4 @@ const Header = ({ isLoggedIn, onLoginClick, onLogout }) => {
     </Navbar>
   );
 };
-
 export default Header;
