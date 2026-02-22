@@ -1,6 +1,7 @@
 import { Modal, Button, Form, Spinner, Image } from "react-bootstrap";
 import { Image as ImageIcon, CameraVideo, XLg } from "react-bootstrap-icons";
 import { useState } from "react";
+import axios from "axios";
 
 const CreatePostModal = ({ show, handleClose, onAddPost }) => {
   const [content, setContent] = useState("");
@@ -46,20 +47,32 @@ const CreatePostModal = ({ show, handleClose, onAddPost }) => {
         mediaUrl = await uploadFile(selectedFile);
       }
 
-      onAddPost({
-        id: Date.now(),
-        user: "Cải Mè Xanh",
-        content: content,
-        image: selectedFile?.type.startsWith("image") ? mediaUrl : null,
-        video: selectedFile?.type.startsWith("video") ? mediaUrl : null,
-      });
+      // Lấy token từ máy để gửi kèm
+      const token = localStorage.getItem("token");
+
+      // GỌI API LƯU VÀO DATABASE
+      const response = await axios.post(
+        "http://localhost:3000/api/posts",
+        {
+          desc: content,
+          img: mediaUrl,
+          video: mediaUrl,
+        },
+        {
+          headers: { token: `Bearer ${token}` }, // Xác thực người dùng
+        }
+      );
+
+      // Backend trả về post mới có đầy đủ thông tin author
+      onAddPost(response.data);
 
       setContent("");
       setSelectedFile(null);
       setPreviewUrl(null);
       handleClose();
     } catch (error) {
-      alert("Có lỗi xảy ra khi đăng bài!");
+      console.error("Lỗi đăng bài:", error);
+      alert(error.response?.data?.message || "Có lỗi xảy ra khi đăng bài!");
     } finally {
       setLoading(false);
     }

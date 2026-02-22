@@ -7,12 +7,14 @@ import PostCard from "./components/PostCard";
 import AuthModal from "./components/AuthModal";
 import CreatePostModal from "./components/CreatePostModal";
 import "./App.css";
+import axios from "axios";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
 
   // Tự động kiểm tra đăng nhập khi vừa load trang
   useEffect(() => {
@@ -48,16 +50,17 @@ function App() {
     setUser(null);
   };
 
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: "Cá voi xanh",
-      content: "Mọi người có ai biết bài nào dễ tập cho người mới không?",
-      image: "https://images.unsplash.com/photo-1524230572899-a752b3835840",
-      likes: 12,
-      comments: 5,
-    },
-  ]);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/posts");
+        setPosts(response.data);
+      } catch (error) {
+        console.error("Không thể lấy bài viết:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const handleAddPost = (newPost) => {
     setPosts([newPost, ...posts]);
@@ -114,11 +117,12 @@ function App() {
 
               {posts.map((post) => (
                 <PostCard
-                  key={post.id}
-                  isLoggedIn={isLoggedIn}
-                  user={post.user}
-                  content={post.content}
-                  image={post.image}
+                  key={post._id}
+                  user={post.userId?.displayName}
+                  avatar={post.userId?.avatar}
+                  content={post.desc}
+                  image={post.img}
+                  createdAt={post.createdAt}
                 />
               ))}
             </Col>
