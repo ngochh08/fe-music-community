@@ -62,6 +62,28 @@ function App() {
     fetchPosts();
   }, []);
 
+  // Hàm xử lý Xóa bài viết
+  const handleDeletePost = async (postId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:3000/api/posts/${postId}`, {
+        headers: { token: `Bearer ${token}` },
+      });
+      // Cập nhật state để xóa bài viết khỏi giao diện ngay lập tức
+      setPosts(posts.filter((post) => post._id !== postId));
+    } catch (error) {
+      console.error("Lỗi khi xóa bài viết:", error);
+      alert(error.response?.data || "Có lỗi xảy ra khi xóa bài viết");
+    }
+  };
+
+  // Hàm xử lý Cập nhật bài viết sau khi sửa thành công
+  const handleUpdatePost = (updatedPost) => {
+    setPosts(
+      posts.map((post) => (post._id === updatedPost._id ? updatedPost : post))
+    );
+  };
+
   const handleAddPost = (newPost) => {
     setPosts([newPost, ...posts]);
   };
@@ -118,11 +140,21 @@ function App() {
               {posts.map((post) => (
                 <PostCard
                   key={post._id}
+                  // Truyền nguyên object post để PostCard lấy dữ liệu dễ hơn
+                  post={post}
+                  // Kiểm tra xem user hiện tại có phải chủ bài viết không (để hiện nút Sửa/Xóa)
+                  isOwner={
+                    user?._id === post.userId?._id ||
+                    user?.id === post.userId?._id
+                  }
                   user={post.userId?.displayName}
                   avatar={post.userId?.avatar}
                   content={post.desc}
                   image={post.img}
                   createdAt={post.createdAt}
+                  // Truyền 2 hàm xử lý xuống
+                  onDelete={handleDeletePost}
+                  onUpdate={handleUpdatePost}
                 />
               ))}
             </Col>
@@ -133,6 +165,7 @@ function App() {
           show={showCreateModal}
           handleClose={() => setShowCreateModal(false)}
           onAddPost={handleAddPost}
+          user={user}
         />
       </div>
       <Footer />
