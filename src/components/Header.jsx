@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Navbar,
   Nav,
@@ -27,7 +28,12 @@ const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="align-items-center">
-            <Nav.Link href="#community" className="text-white me-3">
+            <Nav.Link
+              as={Link}
+              to="/posts"
+              className="fw-bold"
+              style={{ color: "#fdf8f3" }}
+            >
               Community
             </Nav.Link>
 
@@ -52,7 +58,11 @@ const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
                 align="end"
                 className="custom-dropdown-toggle"
               >
-                <NavDropdown.Item href="#profile">
+                <NavDropdown.Item
+                  as={Link}
+                  to={`/profile/${user?._id}`} // Truyền ID vào URL để Backend biết cần lấy data của ai
+                  className="py-2"
+                >
                   Trang cá nhân
                 </NavDropdown.Item>
                 <NavDropdown.Item href="#settings">Cài đặt</NavDropdown.Item>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner, Image } from "react-bootstrap";
-import { Image as ImageIcon, XLg } from "react-bootstrap-icons";
+import { Image as ImageIcon, CameraVideo, XLg } from "react-bootstrap-icons";
 import axios from "axios";
 
 const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
@@ -8,13 +8,15 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
+  const [fileType, setFileType] = useState("");
 
   const mainBrown = "#5c4023";
 
   useEffect(() => {
     if (post) {
       setContent(post.desc || "");
-      setPreview(post.img || "");
+      setPreview(post.img || post.video || "");
+      setFileType(post.video ? "video" : "image"); // Xác định loại file ban đầu
     }
   }, [post, show]);
 
@@ -23,6 +25,7 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
     if (file) {
       setSelectedFile(file);
       setPreview(URL.createObjectURL(file));
+      setFileType(file.type.startsWith("video") ? "video" : "image"); // Cập nhật loại file mới
     }
   };
 
@@ -31,9 +34,13 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
     data.append("file", file);
     // Sử dụng preset guitar_preset giống CreatePostModal cho đồng bộ
     data.append("upload_preset", "guitar_preset");
+
+    // Xử lý loại resource động: image hoặc video
+    const resourceType = file.type.startsWith("video") ? "video" : "image";
+
     try {
       const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dhzj4ciy6/image/upload",
+        `https://api.cloudinary.com/v1_1/dhzj4ciy6/${resourceType}/upload`,
         data
       );
       return res.data.secure_url;
@@ -48,15 +55,22 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      let mediaUrl = post.img;
 
+      // Nếu không có preview (đã bấm X) thì xóa trắng, ngược lại giữ giá trị cũ
+      let mediaUrl = preview ? post.img || post.video : "";
+
+      // Nếu người dùng chọn file mới, thực hiện upload
       if (selectedFile) {
         mediaUrl = await uploadFile(selectedFile);
       }
 
       const response = await axios.put(
         `http://localhost:3000/api/posts/${post._id}`,
-        { desc: content, img: mediaUrl },
+        {
+          desc: content,
+          img: fileType === "image" ? mediaUrl : "", // Nếu là video thì xóa ảnh cũ
+          video: fileType === "video" ? mediaUrl : "", // Nếu là ảnh thì xóa video cũ
+        },
         { headers: { token: `Bearer ${token}` } }
       );
 
@@ -138,11 +152,20 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
               >
                 <XLg size={16} />
               </div>
-              <Image
-                src={preview}
-                className="w-100 h-auto"
-                style={{ maxHeight: "400px", objectFit: "contain" }}
-              />
+              {fileType === "image" ? (
+                <Image
+                  src={preview}
+                  className="w-100 h-auto"
+                  style={{ maxHeight: "400px", objectFit: "contain" }}
+                />
+              ) : (
+                <video
+                  src={preview}
+                  className="w-100"
+                  style={{ maxHeight: "400px" }}
+                  controls
+                />
+              )}
             </div>
           )}
 
@@ -157,6 +180,18 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
                 <input
                   type="file"
                   accept="image/*"
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </label>
+              <label
+                className="m-0 p-2 rounded-circle hover-bg"
+                style={{ cursor: "pointer" }}
+              >
+                <CameraVideo color="#f02849" size={24} />
+                <input
+                  type="file"
+                  accept="video/*"
                   hidden
                   onChange={handleFileChange}
                 />

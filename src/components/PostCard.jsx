@@ -120,9 +120,20 @@ const PostCard = ({
 
       <Card.Text className="fs-5">{content}</Card.Text>
 
-      {image && (
-        <div className="rounded-3 overflow-hidden border">
-          <Card.Img src={image} variant="bottom" />
+      {post.img && post.img.trim() !== "" && (
+        <div className="rounded-3 overflow-hidden border mt-2">
+          <Card.Img src={post.img} variant="bottom" />
+        </div>
+      )}
+
+      {post.video && post.video.trim() !== "" && (
+        <div className="rounded-3 overflow-hidden border mt-2">
+          <video
+            src={post.video}
+            controls
+            className="w-100"
+            style={{ maxHeight: "450px", backgroundColor: "#000" }}
+          />
         </div>
       )}
 
