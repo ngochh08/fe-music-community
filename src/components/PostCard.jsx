@@ -49,9 +49,8 @@ const PostCard = ({
   return (
     <Card className="post-card p-3 mb-3 border-0 shadow-sm position-relative">
       <Stack direction="horizontal" gap={3} className="mb-3">
-        {/* Thay link mặc định bằng avatar từ props */}
         <Image
-          src={avatar || "https://via.placeholder.com/150"}
+          src={post.userId?.avatar || "/images/default_avatar.jpg"}
           roundedCircle
           width={45}
           height={45}
@@ -59,7 +58,7 @@ const PostCard = ({
         />
         <div>
           <h6 className="m-0 fw-bold" style={{ color: mainBrown }}>
-            {user}
+            {post.userId?.displayName}
           </h6>
           {/* Sử dụng timeago để hiển thị thời gian thực từ Database */}
           <small className="text-muted">
