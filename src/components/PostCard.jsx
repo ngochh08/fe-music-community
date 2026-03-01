@@ -4,6 +4,7 @@ import { register } from "timeago.js";
 import { ThreeDots, Pencil, Trash3 } from "react-bootstrap-icons";
 import { useState } from "react";
 import EditPostModal from "./EditPostModal";
+import { Link } from "react-router-dom";
 
 const viLocale = (number, index) => {
   return [
@@ -27,7 +28,7 @@ register("vi", viLocale);
 
 const PostCard = ({
   post,
-  user,
+  currentUser,
   avatar,
   content,
   image,
@@ -41,6 +42,11 @@ const PostCard = ({
 
   const mainBrown = "#5c4023";
 
+  const displayName = isOwner
+    ? currentUser?.displayName
+    : post.userId?.displayName;
+  const userAvatar = isOwner ? currentUser?.avatar : post.userId?.avatar;
+
   const handleDeleteClick = () => {
     setShowDeleteConfirm(false);
     onDelete(post._id);
@@ -49,17 +55,21 @@ const PostCard = ({
   return (
     <Card className="post-card p-3 mb-3 border-0 shadow-sm position-relative">
       <Stack direction="horizontal" gap={3} className="mb-3">
-        <Image
-          src={post.userId?.avatar || "/images/default_avatar.jpg"}
-          roundedCircle
-          width={45}
-          height={45}
-          style={{ objectFit: "cover", border: `1px solid ${mainBrown}33` }}
-        />
+        <Link to={`/profile/${post.userId?._id || post.userId}`}>
+          <Image
+            src={userAvatar || "/images/default_avatar.jpg"}
+            roundedCircle
+            width={45}
+            height={45}
+            style={{ objectFit: "cover", border: `1px solid ${mainBrown}33` }}
+          />
+        </Link>
         <div>
-          <h6 className="m-0 fw-bold" style={{ color: mainBrown }}>
-            {post.userId?.displayName}
-          </h6>
+          <Link to={`/profile/${post.userId?._id || post.userId}`}>
+            <h6 className="m-0 fw-bold" style={{ color: mainBrown }}>
+              {displayName}
+            </h6>
+          </Link>
           {/* Sử dụng timeago để hiển thị thời gian thực từ Database */}
           <small className="text-muted">
             {createdAt ? format(createdAt, "vi") : "Vừa xong"}

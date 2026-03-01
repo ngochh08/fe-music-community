@@ -66,3 +66,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* hover vào tên/ảnh, người dùng biết là có thể click được: */
+.post-card a:hover h6 {
+  opacity: 0.8;
+}
+
+.post-card img:hover {
+  opacity: 0.9;
+  transition: 0.2s;
+}

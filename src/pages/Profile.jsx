@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Image, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Image, Spinner, Button } from "react-bootstrap";
 import PostCard from "../components/PostCard";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { PencilSquare } from "react-bootstrap-icons";
+import EditProfileModal from "../components/EditProfileModal";
+import CreatePostModal from "../components/CreatePostModal";
 
-const Profile = ({ currentUser }) => {
+const Profile = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
   const [userProfile, setUserProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+
+  // Hàm cập nhật lại giao diện sau khi sửa thành công
+  const handleProfileUpdate = (updatedUser) => {
+    setUserProfile(updatedUser);
+    if (onUserUpdate) {
+      onUserUpdate(updatedUser); // Cập nhật giao diện Header và Modal
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -66,9 +79,20 @@ const Profile = ({ currentUser }) => {
   return (
     <Container className="py-4">
       <div
-        className="text-center mb-5 p-4 rounded-4 shadow-sm"
+        className="text-center mb-5 p-4 rounded-4 shadow-sm position-relative"
         style={{ backgroundColor: "#fdf8f3" }}
       >
+        {/* Nút Chỉnh sửa: Chỉ hiện khi xem profile của chính mình */}
+        {currentUser?._id === id && (
+          <Button
+            variant="link"
+            className="position-absolute text-brown shadow-none p-0"
+            style={{ top: "15px", right: "20px", color: "#5c4023" }}
+            onClick={() => setShowEditModal(true)} // Bật Modal khi click
+          >
+            <PencilSquare size={22} />
+          </Button>
+        )}
         <Image
           src={userProfile?.avatar || "/images/default_avatar.jpg"}
           roundedCircle
@@ -81,11 +105,35 @@ const Profile = ({ currentUser }) => {
         <h2 className="fw-bold" style={{ color: "#5c4023" }}>
           {userProfile?.displayName || "Người dùng"}
         </h2>
-        <p className="text-muted italic">"Yêu âm nhạc"</p>
       </div>
 
       <Row className="justify-content-center">
         <Col md={8}>
+          {/* Chỉ hiện phần đăng bài nếu là profile của mình */}
+          {currentUser?._id === id && (
+            <div
+              className="p-3 mb-4 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3"
+              style={{ cursor: "pointer", transition: "0.2s" }}
+              onClick={() => setShowCreatePost(true)}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#f8f9fa")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#fff")
+              }
+            >
+              <Image
+                src={currentUser?.avatar || "/images/default_avatar.jpg"}
+                roundedCircle
+                width={40}
+                height={40}
+                style={{ objectFit: "cover" }}
+              />
+              <div className="bg-light flex-grow-1 p-2 px-3 rounded-pill text-muted">
+                Chào {userProfile?.displayName}, bạn đang nghĩ gì thế?
+              </div>
+            </div>
+          )}
           <h5 className="mb-4 fw-bold" style={{ color: "#5c4023" }}>
             Bài viết đã đăng ({posts.length})
           </h5>
@@ -94,6 +142,7 @@ const Profile = ({ currentUser }) => {
               <PostCard
                 key={p._id}
                 post={p}
+                currentUser={currentUser}
                 content={p.desc}
                 createdAt={p.createdAt}
                 isOwner={currentUser?._id === id}
@@ -108,6 +157,22 @@ const Profile = ({ currentUser }) => {
           )}
         </Col>
       </Row>
+
+      <CreatePostModal
+        show={showCreatePost}
+        handleClose={() => setShowCreatePost(false)}
+        onAddPost={handleAddPost}
+        user={currentUser}
+      />
+
+      {userProfile && (
+        <EditProfileModal
+          show={showEditModal}
+          handleClose={() => setShowEditModal(false)}
+          userProfile={userProfile}
+          onUpdate={handleProfileUpdate} // Truyền hàm cập nhật giao diện
+        />
+      )}
     </Container>
   );
 };

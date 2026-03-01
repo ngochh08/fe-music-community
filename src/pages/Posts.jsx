@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import PostCard from "../components/PostCard";
 import AuthModal from "../components/AuthModal";
 import CreatePostModal from "../components/CreatePostModal";
@@ -13,7 +11,7 @@ function Posts() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [posts, setPosts] = useState([]);
 
   // Tự động kiểm tra đăng nhập khi vừa load trang
@@ -25,7 +23,7 @@ function Posts() {
         const parsedUser = JSON.parse(savedUser);
         if (parsedUser) {
           setIsLoggedIn(true);
-          setUser(parsedUser);
+          setCurrentUser(parsedUser);
         }
       } catch (error) {
         console.error("Lỗi dữ liệu JSON, đang xóa bộ nhớ tạm...");
@@ -38,7 +36,7 @@ function Posts() {
   // Xử lý khi đăng nhập thành công từ AuthModal
   const handleLoginSuccess = (userData) => {
     setIsLoggedIn(true);
-    setUser(userData);
+    setCurrentUser(userData);
     setShowAuth(false);
   };
 
@@ -47,7 +45,7 @@ function Posts() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setUser(null);
+    setCurrentUser(null);
   };
 
   useEffect(() => {
@@ -114,7 +112,8 @@ function Posts() {
                 {isLoggedIn ? (
                   <>
                     <p className="text-muted m-0">
-                      Chào {user?.displayName || "bạn"}, bạn đang nghĩ gì?
+                      Chào {currentUser?.displayName || "bạn"}, bạn đang nghĩ
+                      gì?
                     </p>
                     <div className="plus-icon-circle">+</div>
                   </>
@@ -137,10 +136,10 @@ function Posts() {
                   post={post}
                   // Kiểm tra xem user hiện tại có phải chủ bài viết không (để hiện nút Sửa/Xóa)
                   isOwner={
-                    user?._id === post.userId?._id ||
-                    user?.id === post.userId?._id
+                    currentUser?._id === post.userId?._id ||
+                    currentUser?.id === post.userId?._id
                   }
-                  user={post.userId?.displayName}
+                  currentUser={currentUser}
                   avatar={post.userId?.avatar}
                   content={post.desc}
                   image={post.img}
@@ -158,7 +157,7 @@ function Posts() {
           show={showCreateModal}
           handleClose={() => setShowCreateModal(false)}
           onAddPost={handleAddPost}
-          user={user}
+          user={currentUser}
         />
       </div>
 

@@ -8,7 +8,7 @@ import {
   Button,
 } from "react-bootstrap";
 
-const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
+const Header = ({ currentUser, isLoggedIn, onLoginClick, onLogout }) => {
   return (
     <Navbar
       style={{ backgroundColor: "#5c4023" }}
@@ -34,7 +34,15 @@ const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
               className="fw-bold"
               style={{ color: "#fdf8f3" }}
             >
-              Community
+              Cộng đồng
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/blog"
+              className="fw-bold"
+              style={{ color: "#fdf8f3" }}
+            >
+              Bài viết
             </Nav.Link>
 
             {isLoggedIn ? (
@@ -43,14 +51,14 @@ const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
                 title={
                   <div className="d-inline-flex align-items-center gap-2">
                     <Image
-                      src={user?.avatar}
+                      src={currentUser?.avatar}
                       roundedCircle
                       width={35}
                       height={35}
                       style={{ objectFit: "cover", border: "1px solid #fff" }}
                     />
                     <span className="text-white fw-bold">
-                      {user?.displayName}
+                      {currentUser?.displayName}
                     </span>
                   </div>
                 }
@@ -60,7 +68,7 @@ const Header = ({ isLoggedIn, user, onLoginClick, onLogout }) => {
               >
                 <NavDropdown.Item
                   as={Link}
-                  to={`/profile/${user?._id}`} // Truyền ID vào URL để Backend biết cần lấy data của ai
+                  to={`/profile/${currentUser?._id}`} // Truyền ID vào URL để Backend biết cần lấy data của ai
                   className="py-2"
                 >
                   Trang cá nhân

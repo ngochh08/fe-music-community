@@ -7,30 +7,28 @@ import Posts from "./pages/Posts";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 import "./App.css";
+import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved && saved !== "undefined" ? JSON.parse(saved) : null;
+  });
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
-    if (savedUser && savedUser !== "undefined" && savedToken) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setIsLoggedIn(true);
-        setUser(parsedUser);
-      } catch (error) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-      }
+    if (currentUser && savedToken) {
+      setIsLoggedIn(true);
     }
-  }, []);
+  }, [currentUser]);
 
   const handleLoginSuccess = (userData) => {
     setIsLoggedIn(true);
-    setUser(userData);
+    setCurrentUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData)); // Lưu khi đăng nhập
     setShowAuth(false);
   };
 
@@ -38,26 +36,35 @@ function App() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setUser(null);
+    setCurrentUser(null);
+    window.location.href = "/";
+    alert("Đăng xuất thành công!");
+  };
+
+  const updateCurrentUser = (newUser) => {
+    setCurrentUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser)); // Lưu lại vào bộ nhớ trình duyệt
   };
 
   return (
     <Router>
       <div className="app-wrapper">
         <Header
+          currentUser={currentUser}
           isLoggedIn={isLoggedIn}
-          user={user}
           onLoginClick={() => setShowAuth(true)}
           onLogout={handleLogout}
         />
         <div className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
             <Route
               path="/posts"
               element={
                 <Posts
-                  user={user}
+                  currentUser={currentUser}
                   isLoggedIn={isLoggedIn}
                   setShowAuth={() => setShowAuth(true)}
                 />
@@ -65,8 +72,14 @@ function App() {
             />
             <Route
               path="/profile/:id"
-              element={<Profile currentUser={user} />}
+              element={
+                <Profile
+                  currentUser={currentUser}
+                  onUserUpdate={updateCurrentUser}
+                />
+              }
             />
+            ;
           </Routes>
         </div>
         <Footer />
