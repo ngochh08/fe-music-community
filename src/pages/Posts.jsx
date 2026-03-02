@@ -13,6 +13,8 @@ function Posts() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState("");
 
   // Tự động kiểm tra đăng nhập khi vừa load trang
   useEffect(() => {
@@ -51,13 +53,45 @@ function Posts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/posts");
-        setPosts(response.data);
+        const response = await axios.get(
+          `http://localhost:3000/api/posts?page=${page}&limit=2&keyword=${keyword}`
+        );
+        const newPosts = [...posts, ...response.data.posts]; //merge các bài viết mới với các bài viết cũ
+        setPosts(newPosts);
       } catch (error) {
         console.error("Không thể lấy bài viết:", error);
       }
     };
     fetchPosts();
+  }, [page]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/posts?page=${1}&limit=2&keyword=${keyword}`
+        );
+        setPage(1);
+        setPosts(response.data.posts);
+      } catch (error) {
+        console.error("Không thể lấy bài viết:", error);
+      }
+    };
+    fetchPosts();
+  }, [keyword]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 1 >=
+        document.documentElement.scrollHeight
+      ) {
+        setPage((page) => page + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Hàm xử lý Xóa bài viết
@@ -96,6 +130,8 @@ function Posts() {
                 <Form.Control
                   placeholder="Tìm kiếm bài viết..."
                   className="search-input"
+                  value={keyword}
+                  onChange={(event) => setKeyword(event.target.value)}
                 />
                 <InputGroup.Text className="search-icon-box">
                   <Search color="#6c757d" />

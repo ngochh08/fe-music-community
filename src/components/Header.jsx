@@ -40,7 +40,7 @@ const Header = ({ currentUser, isLoggedIn, onLoginClick, onLogout }) => {
               as={Link}
               to="/blog"
               className="fw-bold"
-              style={{ color: "#fdf8f3" }}
+              style={{ color: "#fdf8f3", marginRight: 25 }}
             >
               Bài viết
             </Nav.Link>
