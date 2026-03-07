@@ -130,7 +130,8 @@ const Profile = ({ currentUser, onUserUpdate }) => {
                 style={{ objectFit: "cover" }}
               />
               <div className="bg-light flex-grow-1 p-2 px-3 rounded-pill text-muted">
-                Chào {userProfile?.displayName}, bạn đang nghĩ gì thế?
+                Hôm nay {currentUser?.displayName} muốn chia sẻ điều gì với mọi
+                người?
               </div>
             </div>
           )}

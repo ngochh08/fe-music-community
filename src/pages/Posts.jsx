@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Form, InputGroup } from "react-bootstrap";
+import { Container, Row, Col, Form, InputGroup, Image } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import PostCard from "../components/PostCard";
 import AuthModal from "../components/AuthModal";
@@ -15,6 +15,8 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+
+  const mainBrown = "#5c4023";
 
   // Tự động kiểm tra đăng nhập khi vừa load trang
   useEffect(() => {
@@ -126,39 +128,81 @@ function Posts() {
         <Container className="py-5">
           <Row className="justify-content-center">
             <Col xs={12} md={8} lg={8}>
-              <InputGroup className="mb-4 search-container">
+              <div className="search-wrapper mb-4 position-relative">
                 <Form.Control
+                  type="text"
                   placeholder="Tìm kiếm bài viết..."
-                  className="search-input"
+                  className="search-input-v2 rounded-pill border-0 shadow-sm px-4 py-2"
+                  style={{
+                    backgroundColor: "#fff",
+                    paddingRight: "45px", // Chừa chỗ cho icon search
+                    fontSize: "0.95rem",
+                    height: "45px",
+                    transition: "all 0.3s ease",
+                  }}
                   value={keyword}
                   onChange={(event) => setKeyword(event.target.value)}
                 />
-                <InputGroup.Text className="search-icon-box">
-                  <Search color="#6c757d" />
-                </InputGroup.Text>
-              </InputGroup>
+                <div
+                  className="position-absolute d-flex align-items-center justify-content-center"
+                  style={{
+                    top: "0",
+                    right: "15px",
+                    height: "100%",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Search
+                    size={18}
+                    color={mainBrown}
+                    style={{ opacity: 0.6 }}
+                  />
+                </div>
+              </div>
 
               <div
-                className="create-post-box mb-4 p-3 d-flex justify-content-between align-items-center"
-                style={{ cursor: "pointer" }}
+                className="p-3 mb-4 rounded-4 shadow-sm border bg-white d-flex align-items-center gap-3"
+                style={{ cursor: "pointer", transition: "0.2s" }}
                 onClick={() =>
                   isLoggedIn ? setShowCreateModal(true) : setShowAuth(true)
+                }
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#fff")
                 }
               >
                 {isLoggedIn ? (
                   <>
-                    <p className="text-muted m-0">
-                      Chào {currentUser?.displayName || "bạn"}, bạn đang nghĩ
-                      gì?
-                    </p>
-                    <div className="plus-icon-circle">+</div>
+                    <Image
+                      src={currentUser?.avatar || "/images/default_avatar.jpg"}
+                      roundedCircle
+                      width={40}
+                      height={40}
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div className="bg-light flex-grow-1 p-2 px-3 rounded-pill text-muted">
+                      Hôm nay {currentUser?.displayName} muốn chia sẻ điều gì
+                      với mọi người?
+                    </div>
                   </>
                 ) : (
                   <>
-                    <p className="m-0" style={{ color: "#5c4023" }}>
-                      <b>Đăng nhập</b> để chia sẻ bài viết của bạn...
-                    </p>
-                    <div className="plus-icon-circle" style={{ opacity: 0.5 }}>
+                    <div className="bg-light flex-grow-1 p-2 px-3 rounded-pill text-muted">
+                      <b style={{ color: "#5c4023" }}>Đăng nhập</b> để chia sẻ
+                      bài viết của bạn...
+                    </div>
+                    <div
+                      className="plus-icon-circle d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        backgroundColor: "#5c402322",
+                        color: "#5c4023",
+                      }}
+                    >
                       +
                     </div>
                   </>

@@ -73,7 +73,7 @@ const Header = ({ currentUser, isLoggedIn, onLoginClick, onLogout }) => {
                 >
                   Trang cá nhân
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#settings">Cài đặt</NavDropdown.Item>
+                {/* <NavDropdown.Item href="#settings">Cài đặt</NavDropdown.Item> */}
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={onLogout} className="text-danger">
                   Thoát tài khoản
@@ -81,10 +81,30 @@ const Header = ({ currentUser, isLoggedIn, onLoginClick, onLogout }) => {
               </NavDropdown>
             ) : (
               <Button
-                variant="light"
+                variant="outline-light"
                 size="sm"
-                className="px-4 rounded-pill"
+                className="px-4 rounded-pill fw-bold border-2"
+                style={{
+                  fontSize: "0.95rem",
+                  minWidth: "130px",
+                  height: "45px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingTop: "0",
+                  paddingBottom: "0",
+                  lineHeight: "1",
+                  transition: "all 0.2s",
+                }}
                 onClick={onLoginClick}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "white";
+                  e.currentTarget.style.color = "#5c4023";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "white";
+                }}
               >
                 Đăng nhập
               </Button>

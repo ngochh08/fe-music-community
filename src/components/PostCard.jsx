@@ -1,10 +1,26 @@
-import { Card, Image, Stack, Modal, Button, Dropdown } from "react-bootstrap";
+import {
+  Card,
+  Image,
+  Stack,
+  Modal,
+  Button,
+  Dropdown,
+  Form,
+} from "react-bootstrap";
 import { format } from "timeago.js";
 import { register } from "timeago.js";
-import { ThreeDots, Pencil, Trash3 } from "react-bootstrap-icons";
-import { useState } from "react";
+import {
+  ThreeDots,
+  Pencil,
+  Trash3,
+  Chat,
+  Heart,
+  HeartFill,
+} from "react-bootstrap-icons";
+import { useState, useEffect } from "react";
 import EditPostModal from "./EditPostModal";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const viLocale = (number, index) => {
   return [
@@ -29,13 +45,12 @@ register("vi", viLocale);
 const PostCard = ({
   post,
   currentUser,
-  avatar,
   content,
-  image,
   createdAt,
   isOwner,
   onDelete,
   onUpdate,
+  setShowAuth,
 }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -50,6 +65,69 @@ const PostCard = ({
   const handleDeleteClick = () => {
     setShowDeleteConfirm(false);
     onDelete(post._id);
+  };
+
+  const [likes, setLikes] = useState(post.likes.length);
+  const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser?._id));
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Lấy danh sách bình luận khi mở khung comment
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/comments/${post._id}`
+        );
+        setComments(res.data);
+      } catch (err) {
+        console.log("Lỗi lấy comment:", err);
+      }
+    };
+    fetchComments();
+  }, [post._id]);
+
+  // Gửi bình luận mới
+  const handleCommentSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!commentText.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const savedToken = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://localhost:3000/api/comments",
+        { postId: post._id, content: commentText },
+        { headers: { token: `Bearer ${savedToken}` } }
+      );
+      setComments((prev) => [res.data, ...prev]);
+      setCommentText("");
+    } catch (err) {
+      console.log("Lỗi gửi comment:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const savedToken = localStorage.getItem("token");
+      const res = await axios.put(
+        `http://localhost:3000/api/posts/${post._id}/like`,
+        { userId: currentUser._id },
+        {
+          headers: {
+            token: `Bearer ${savedToken}`,
+          },
+        }
+      );
+      setIsLiked(!isLiked);
+      setLikes(isLiked ? likes - 1 : likes + 1);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -143,6 +221,108 @@ const PostCard = ({
             className="w-100"
             style={{ maxHeight: "450px", backgroundColor: "#000" }}
           />
+        </div>
+      )}
+
+      <hr className="my-3 opacity-25" />
+      <Stack direction="horizontal" gap={4} className="px-2">
+        {/* Nút Like */}
+        <div
+          className="d-flex align-items-center gap-2"
+          style={{ cursor: "pointer", transition: "all 0.2s" }}
+          onClick={handleLike}
+        >
+          {isLiked ? (
+            <HeartFill size={20} color="#e63946" />
+          ) : (
+            <Heart size={20} color={mainBrown} />
+          )}
+          <span
+            className="fw-bold"
+            style={{ color: isLiked ? "#e63946" : mainBrown }}
+          >
+            {likes}
+          </span>
+        </div>
+
+        {/* Nút Bình luận*/}
+        <div
+          className="d-flex align-items-center gap-2"
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowComments(!showComments)} // Thêm click để ẩn/hiện
+        >
+          <Chat size={20} color={mainBrown} />
+          <span className="fw-bold" style={{ color: mainBrown }}>
+            {comments.length || 0}
+          </span>
+        </div>
+      </Stack>
+
+      {/* Chỉ hiển thị toàn bộ phần này khi click vào icon comment */}
+      {showComments && (
+        <div className="mt-3 pt-3 border-top">
+          {currentUser ? (
+            <Stack direction="horizontal" gap={2} className="mb-3">
+              <Image
+                src={currentUser?.avatar || "/images/default_avatar.jpg"}
+                roundedCircle
+                width={32}
+                height={32}
+                style={{ objectFit: "cover" }}
+              />
+              <Form.Control
+                type="text"
+                placeholder="Viết bình luận..."
+                className="rounded-pill bg-light border-0 shadow-none py-2 px-3"
+                style={{ fontSize: "0.85rem" }}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCommentSubmit(e);
+                }}
+              />
+            </Stack>
+          ) : (
+            /* Phần này chỉ hiện khi showComments = true */
+            <div
+              className="mb-3 p-2 text-center rounded-3 bg-light text-muted"
+              style={{ fontSize: "0.85rem", cursor: "pointer" }}
+              onClick={() => setShowAuth(true)}
+            >
+              Bạn cần <b style={{ color: mainBrown }}>Đăng nhập</b> để tham gia
+              bình luận.
+            </div>
+          )}
+
+          {/* Danh sách bình luận */}
+          <div className="comments-list">
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <div className="d-flex gap-2 mb-2" key={comment._id}>
+                  <Image
+                    src={comment.userId?.avatar || "/images/default_avatar.jpg"}
+                    roundedCircle
+                    width={28}
+                    height={28}
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div
+                    className="p-2 rounded-3 bg-light"
+                    style={{ fontSize: "0.85rem", maxWidth: "85%" }}
+                  >
+                    <b className="d-block" style={{ color: mainBrown }}>
+                      {comment.userId?.displayName}
+                    </b>
+                    <span>{comment.content}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <small className="text-muted d-block text-center py-2">
+                Chưa có bình luận nào.
+              </small>
+            )}
+          </div>
         </div>
       )}
 

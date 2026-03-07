@@ -13,32 +13,6 @@
   width: 100%;
 }
 
-/* Ô tìm kiếm  */
-.search-container {
-  border: 1.5px solid #8d7b68; /* Viền nâu rõ ràng, không mờ */
-  border-radius: 50px; /* Bo tròn tối đa */
-  background-color: #ded9c8;
-  overflow: hidden; /* Cắt góc các phần tử con */
-  display: flex;
-  align-items: center;
-}
-
-/* Ô input bên trong */
-.search-input {
-  border: none; /* Xóa viền mặc định của input */
-  box-shadow: none; /* Xóa bóng mờ khi click vào */
-  background: transparent;
-  padding: 10px 20px;
-}
-
-/* Phần chứa icon kính lúp */
-.search-icon-box {
-  background: transparent;
-  border: none;
-  padding-right: 15px;
-  color: #8d7b68;
-}
-
 /* Ô viết bài  */
 .create-post-box {
   background-color: #ded9c8;
@@ -56,27 +30,33 @@
 
 /* Lớp nền Footer */
 .footer-section {
-  background-color: #e8e4d9; /* Màu kem đồng bộ với body */
-  border-top: 1px solid #d6d1c2; /* Đường kẻ mờ ngăn cách */
+  background-color: #fdfaf7;
+  border-top: none;
+  border: none;
+  padding-top: 80px;
 }
 
 /* Font chữ Logo Footer */
 .footer-logo {
   font-family: "serif";
-  color: #5c4023; /* Màu nâu đặc trưng */
-  font-weight: normal;
+  color: #8c6943;
+  font-weight: bold;
+  letter-spacing: -1px;
 }
 
 .footer-section p {
-  color: #666; /* Màu xám nhẹ cho chữ */
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  letter-spacing: 0.5px;
+  font-family: "Segoe UI", sans-serif;
+  letter-spacing: 0.3px;
+  line-height: 1.6;
 }
 
 .footer-heading {
-  font-family: "serif";
-  font-weight: 500;
-  color: #444;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: #8c6943;
+  letter-spacing: 1px;
 }
 
 /* Thiết lập chiều cao tối thiểu cho toàn bộ app */
@@ -93,10 +73,8 @@
 }
 
 /* Footer sát lề dưới */
-.footer-section {
-  background-color: #e8e4d9;
-  border-top: 1px solid #d6d1c2;
-  width: 100%;
+.footer-section hr {
+  display: none;
 }
 
 /* Làm mượt ô soạn thảo */
@@ -147,4 +125,16 @@
   padding: 0;
   display: flex;
   align-items: center;
+}
+
+/* Hiệu ứng khi click vào ô tìm kiếm */
+.search-input-v2:focus {
+  box-shadow: 0 4px 12px rgba(92, 64, 35, 0.15);
+  background-color: #fff;
+  outline: none;
+}
+
+.search-input-v2::placeholder {
+  color: #adb5bd;
+  font-style: italic;
 }

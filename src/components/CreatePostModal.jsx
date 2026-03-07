@@ -59,7 +59,7 @@ const CreatePostModal = ({ show, handleClose, onAddPost, user }) => {
         {
           desc: content,
           img: isVideo ? "" : mediaUrl, // chỉ gán vào img nếu KHÔNG PHẢI video
-          video: isVideo ? mediaUrl : "", // chỉ gán vào video nếu đúng là file video
+          video: isVideo ? mediaUrl : "", // gán vào video nếu đúng là file video
         },
         {
           headers: { token: `Bearer ${token}` },
