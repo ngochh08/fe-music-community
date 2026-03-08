@@ -31,6 +31,7 @@ const Home = () => {
           height: "90vh",
           borderBottomLeftRadius: "80px",
           position: "relative",
+          zIndex: 0,
         }}
       >
         <Container>
@@ -74,7 +75,10 @@ const Home = () => {
       </section>
 
       {/* 2. Feature Section */}
-      <Container className="py-5" style={{ marginTop: "-80px" }}>
+      <Container
+        className="py-5"
+        style={{ marginTop: "-80px", position: "relative", zIndex: 1 }}
+      >
         <Row className="g-4">
           {[
             {
@@ -84,7 +88,7 @@ const Home = () => {
             },
             {
               icon: <MusicNoteList size={40} />,
-              title: "Bí Kíp Luyện Đàn",
+              title: "Bí kíp luyện đàn",
               desc: "Từ mẹo bấm hợp âm không rè dây đến kỹ thuật quạt chả cực mượt, giúp bạn làm chủ cây đàn Guitar chỉ trong thời gian ngắn.",
             },
             {
@@ -199,7 +203,7 @@ const Home = () => {
       </section>
 
       {/* 4. Social Media */}
-      <section className="py-5" style={{ backgroundColor: "#fdfaf7" }}>
+      <section className="py-5" style={{ backgroundColor: "#efebe6" }}>
         <Container className="text-center">
           <h2 className="fw-bold mb-2" style={{ color: mainBrown }}>
             Lan tỏa đam mê

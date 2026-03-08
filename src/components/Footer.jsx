@@ -2,7 +2,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 const Footer = () => {
   return (
-    <footer className="footer-section py-5 mt-5">
+    <footer className="footer-section py-5">
       <Container>
         <Row>
           {/* Cột 1: Logo chiếm 4 phần bên trái */}

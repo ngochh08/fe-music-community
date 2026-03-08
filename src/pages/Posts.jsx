@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Form, InputGroup, Image } from "react-bootstrap";
+import { Container, Row, Col, Form, Image } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import PostCard from "../components/PostCard";
 import AuthModal from "../components/AuthModal";
@@ -15,7 +15,6 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
-
   const mainBrown = "#5c4023";
 
   // Tự động kiểm tra đăng nhập khi vừa load trang
@@ -44,22 +43,16 @@ function Posts() {
     setShowAuth(false);
   };
 
-  // Xử lý đăng xuất xóa token
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setCurrentUser(null);
-  };
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/posts?page=${page}&limit=2&keyword=${keyword}`
         );
-        const newPosts = [...posts, ...response.data.posts]; //merge các bài viết mới với các bài viết cũ
-        setPosts(newPosts);
+        response.data.posts.forEach((item) => {
+          if (posts.every((post) => post._id !== item._id)) posts.push(item);
+        }); //merge các bài viết mới với các bài viết cũ
+        setPosts((_) => posts);
       } catch (error) {
         console.error("Không thể lấy bài viết:", error);
       }
