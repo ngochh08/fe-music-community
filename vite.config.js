@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    base: process.env.VITE_BASE_PATH || "/fe-music-community",
     server: {
       proxy: {
         // Tất cả yêu cầu bắt đầu bằng /api sẽ được chuyển hướng đến Backend
