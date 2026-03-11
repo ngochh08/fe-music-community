@@ -2,6 +2,7 @@ import { Modal, Button, Form, Spinner, Image } from "react-bootstrap";
 import { Image as ImageIcon, CameraVideo, XLg } from "react-bootstrap-icons";
 import { useState } from "react";
 import axios from "axios";
+import instance from "../api/axios";
 
 // Thêm prop user để hiển thị đúng tên và avatar người đang dùng
 const CreatePostModal = ({ show, handleClose, onAddPost, user }) => {
@@ -54,8 +55,8 @@ const CreatePostModal = ({ show, handleClose, onAddPost, user }) => {
 
       const token = localStorage.getItem("token");
 
-      const response = await axios.post(
-        "http://localhost:3000/api/posts",
+      const response = await instance.post(
+        "/posts",
         {
           desc: content,
           img: isVideo ? "" : mediaUrl, // chỉ gán vào img nếu KHÔNG PHẢI video

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Spinner, Button } from "react-bootstrap";
 import PostCard from "../components/PostCard";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { PencilSquare } from "react-bootstrap-icons";
 import EditProfileModal from "../components/EditProfileModal";
 import CreatePostModal from "../components/CreatePostModal";
+import instance from "../api/axios";
 
 const Profile = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
@@ -27,7 +27,7 @@ const Profile = ({ currentUser, onUserUpdate }) => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:3000/api/users/${id}`);
+        const res = await instance.get(`/users/${id}`);
         setUserProfile(res.data.user);
         setPosts(res.data.posts);
       } catch (err) {
@@ -54,7 +54,7 @@ const Profile = ({ currentUser, onUserUpdate }) => {
   const handleDeletePost = async (postId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/api/posts/${postId}`, {
+      await instance.delete(`/posts/${postId}`, {
         headers: { token: `Bearer ${token}` },
       });
       // Cập nhật state để xóa bài viết khỏi giao diện ngay lập tức

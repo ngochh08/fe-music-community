@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Container, Spinner, Button } from "react-bootstrap";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import instance from "../api/axios";
 
 const BlogDetail = () => {
   const { id } = useParams(); // Lấy ID từ thanh địa chỉ
@@ -12,7 +13,7 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlogDetail = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/blogs/${id}`);
+        const res = await instance.get(`/blogs/${id}`);
         setBlog(res.data);
       } catch (err) {
         console.error("Lỗi tải chi tiết blog:", err);

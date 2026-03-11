@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Image, Spinner } from "react-bootstrap";
 import axios from "axios";
+import instance from "../api/axios";
 
 const EditProfileModal = ({ show, handleClose, userProfile, onUpdate }) => {
   const [displayName, setDisplayName] = useState(
@@ -26,7 +27,7 @@ const EditProfileModal = ({ show, handleClose, userProfile, onUpdate }) => {
     formData.append("upload_preset", "guitar_preset");
 
     try {
-      const res = await axios.post(
+      const res = await instance.post(
         "https://api.cloudinary.com/v1_1/dhzj4ciy6/image/upload",
         formData
       );
@@ -51,13 +52,17 @@ const EditProfileModal = ({ show, handleClose, userProfile, onUpdate }) => {
         }
       }
 
+      const token = localStorage.getItem("token");
+
       // 2. Gọi API cập nhật thông tin user ở Backend
-      const res = await axios.put(
-        `http://localhost:3000/api/users/${userProfile._id}`,
+      const res = await instance.put(
+        `/users/${userProfile._id}`,
         {
-          userId: userProfile._id, // Backend kiểm tra quyền
           displayName: displayName,
           avatar: finalAvatarUrl,
+        },
+        {
+          headers: { token: `Bearer ${token}` },
         }
       );
 

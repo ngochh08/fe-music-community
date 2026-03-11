@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner, Image } from "react-bootstrap";
 import { Image as ImageIcon, CameraVideo, XLg } from "react-bootstrap-icons";
 import axios from "axios";
+import instance from "../api/axios";
 
 const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
   const [content, setContent] = useState("");
@@ -64,8 +65,8 @@ const EditPostModal = ({ show, handleClose, post, onUpdate }) => {
         mediaUrl = await uploadFile(selectedFile);
       }
 
-      const response = await axios.put(
-        `http://localhost:3000/api/posts/${post._id}`,
+      const response = await instance.put(
+        `/posts/${post._id}`,
         {
           desc: content,
           img: fileType === "image" ? mediaUrl : "", // Nếu là video thì xóa ảnh cũ

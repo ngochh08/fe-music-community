@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import EditPostModal from "./EditPostModal";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import instance from "../api/axios";
 
 const viLocale = (number, index) => {
   return [
@@ -78,9 +79,7 @@ const PostCard = ({
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/api/comments/${post._id}`
-        );
+        const res = await instance.get(`/comments/${post._id}`);
         setComments(res.data);
       } catch (err) {
         console.log("Lỗi lấy comment:", err);
@@ -97,8 +96,8 @@ const PostCard = ({
 
     try {
       const savedToken = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:3000/api/comments",
+      const res = await instance.post(
+        "/comments",
         { postId: post._id, content: commentText },
         { headers: { token: `Bearer ${savedToken}` } }
       );
@@ -114,8 +113,8 @@ const PostCard = ({
   const handleLike = async () => {
     try {
       const savedToken = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:3000/api/posts/${post._id}/like`,
+      const res = await instance.put(
+        `/posts/${post._id}/like`,
         { userId: currentUser._id },
         {
           headers: {

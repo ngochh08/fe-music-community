@@ -6,6 +6,7 @@ import AuthModal from "../components/AuthModal";
 import CreatePostModal from "../components/CreatePostModal";
 import "../App.css";
 import axios from "axios";
+import instance from "../api/axios";
 
 function Posts() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,8 +47,8 @@ function Posts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/posts?page=${page}&limit=2&keyword=${keyword}`
+        const response = await instance.get(
+          `/posts?page=${page}&limit=2&keyword=${keyword}`
         );
         response.data.posts.forEach((item) => {
           if (posts.every((post) => post._id !== item._id)) posts.push(item);
@@ -63,8 +64,8 @@ function Posts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/posts?page=${1}&limit=2&keyword=${keyword}`
+        const response = await instance.get(
+          `/posts?page=${1}&limit=2&keyword=${keyword}`
         );
         setPage(1);
         setPosts(response.data.posts);
@@ -93,7 +94,7 @@ function Posts() {
   const handleDeletePost = async (postId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/api/posts/${postId}`, {
+      await instance.delete(`/posts/${postId}`, {
         headers: { token: `Bearer ${token}` },
       });
       // Cập nhật state để xóa bài viết khỏi giao diện ngay lập tức

@@ -2,7 +2,7 @@ import { Modal, Button, Form, InputGroup } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
 import { useState } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
+import instance from "../api/axios";
 
 const AuthModal = ({ show, handleClose, onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,12 +25,10 @@ const AuthModal = ({ show, handleClose, onLoginSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const apiUrl = isLogin
-      ? "http://localhost:3000/api/auth/login"
-      : "http://localhost:3000/api/auth/register";
+    const apiUrl = isLogin ? "/auth/login" : "/auth/register";
 
     try {
-      const response = await axios.post(apiUrl, formData);
+      const response = await instance.post(apiUrl, formData);
 
       // Lấy dữ liệu từ Backend trả về
       const { token, ...userData } = response.data; // Lấy token riêng, còn lại gom vào userData

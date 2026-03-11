@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Badge } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import instance from "../api/axios";
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);
@@ -10,7 +11,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/blogs");
+        const res = await instance.get("/blogs");
         setBlogs(res.data);
       } catch (err) {
         console.error("Lỗi tải blog:", err);
